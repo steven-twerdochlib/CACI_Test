@@ -1,5 +1,6 @@
 package com.caci_test.caci_java_test.RestControllerTest;
 
+import com.caci_test.caci_java_test.Objects.Fulfilled;
 import com.caci_test.caci_java_test.Objects.Order;
 import com.caci_test.caci_java_test.Repository.OrderRepository;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -66,13 +68,24 @@ public class OrderRestControllerTest {
     }
 
     @Test
-    public void updateOrder() throws Exception{
+    public void updateOrderNotDispatched() throws Exception{
         Order newOrder = new Order(53L,122);
+        when(orderRepository.getById(Integer.parseInt(newOrder.getReferenceNo().toString()))).thenReturn(newOrder);
         when(orderRepository.save(newOrder)).thenReturn(newOrder);
         mvc.perform(MockMvcRequestBuilders
                         .post("/updateOrder?referenceNo=53&numBricks=122"))
                 .andExpect(status().isOk())
                 .andExpect(content().json("{\"referenceNo\":53,\"numBricks\":122}"));
+    }
+    @Test
+    public void updateOrderDispatched() throws Exception{
+        Order newOrder = new Order(53L,122);
+        newOrder.setFulfilled(Fulfilled.DISPATCHED);
+        when(orderRepository.getById(Integer.parseInt(newOrder.getReferenceNo().toString()))).thenReturn(newOrder);
+        when(orderRepository.save(newOrder)).thenReturn(newOrder);
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/updateOrder?referenceNo=53&numBricks=122"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -85,9 +98,7 @@ public class OrderRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json("{\"referenceNo\":53,\"numBricks\":122,\"fulfilled\":DISPATCHED}"));
     }
-
-    //Test not working, showing Error Status expected:<200> but was:<400>. Also expected content has a timestamp that the actual result will be different to every time test is run.
-    /*
+    
     @Test
     public void dispatchedOrderIdNotFound() throws Exception{
         Order newOrder = new Order(53L,122);
@@ -95,8 +106,6 @@ public class OrderRestControllerTest {
         when(orderRepository.getById(53)).thenReturn(newOrder);
         mvc.perform(MockMvcRequestBuilders
                         .post("/dispatchedOrder?referenceNo=53"))
-                .andExpect(status().isOk())
-                .andExpect(content().json("{\"timestamp\":\"2023-03-19T02:38:14.762+00:00\",\"status\":400,\"error\":\"Bad Request\",\"path\":\"/dispatchedOrder\"}"));
+                .andExpect(status().isBadRequest());
     }
-     */
 }

@@ -39,10 +39,15 @@ public class OrderRestController {
     }
 
     @PostMapping(value = "/updateOrder")
-    public Order updateOrder(@PathParam("referenceNo") Long referenceNo, @PathParam("numBricks") Integer numBricks) {
-        Order newOrder = new Order(referenceNo, numBricks);
-        orderRepository.save(newOrder);
-        return newOrder;
+    public Order updateOrder(@PathParam("referenceNo") Integer referenceNo, @PathParam("numBricks") Integer numBricks) {
+        if(orderRepository.getById(referenceNo).getFulfilled() == Fulfilled.DISPATCHED){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Order already shipped!");
+        }
+        else{
+            Order newOrder = new Order(Long.parseLong(referenceNo.toString()), numBricks);
+            orderRepository.save(newOrder);
+            return newOrder;
+        }
     }
 
     @PostMapping(value = "/dispatchedOrder")
