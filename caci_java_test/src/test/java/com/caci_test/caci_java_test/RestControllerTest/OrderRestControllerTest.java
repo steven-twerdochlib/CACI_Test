@@ -11,6 +11,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Optional;
+
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -37,4 +39,13 @@ public class OrderRestControllerTest {
                 .andExpect(content().json("0"));
     }
      */
+    @Test
+    public void getOrder() throws Exception{
+        Order newOrder = new Order(53L,35);
+        when(orderRepository.findById(53)).thenReturn(Optional.of(newOrder));
+        mvc.perform(MockMvcRequestBuilders
+                        .get("/getOrder?referenceNo=53"))
+                .andExpect(status().isOk())
+                .andExpect(content().json("{\"referenceNo\":53,\"numBricks\":35}"));
+    }
 }
