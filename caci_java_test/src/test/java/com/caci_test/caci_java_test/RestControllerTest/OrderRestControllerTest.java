@@ -11,6 +11,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
@@ -47,5 +49,19 @@ public class OrderRestControllerTest {
                         .get("/getOrder?referenceNo=53"))
                 .andExpect(status().isOk())
                 .andExpect(content().json("{\"referenceNo\":53,\"numBricks\":35}"));
+    }
+
+    @Test
+    public void getAllOrder() throws Exception{
+        Order newOrder1 = new Order(53L,35);
+        Order newOrder2 = new Order(81L,79);
+        List<Order> listOfOrders = new ArrayList<>();
+        listOfOrders.add(newOrder1);
+        listOfOrders.add(newOrder2);
+        when(orderRepository.findAll()).thenReturn(listOfOrders);
+        mvc.perform(MockMvcRequestBuilders
+                        .get("/getAllOrders"))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[{\"referenceNo\":53,\"numBricks\":35}, {\"referenceNo\":81,\"numBricks\":79}]"));
     }
 }
