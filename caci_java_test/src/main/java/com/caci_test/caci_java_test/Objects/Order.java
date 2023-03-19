@@ -11,16 +11,22 @@ public class Order {
 
     private int numBricks;
 
+    //Always starts of as NOT_DISPATCHED as defined in the constructors.
+    private Fulfilled fulfilled;
+
     public Order(int numBricks) {
         this.numBricks = numBricks;
+        this.fulfilled = Fulfilled.NOT_DISPATCHED;
     }
 
     public Order(Long referenceNo, int numBricks) {
         this.referenceNo = referenceNo;
         this.numBricks = numBricks;
+        this.fulfilled = Fulfilled.NOT_DISPATCHED;
     }
 
     public Order() {
+        this.fulfilled = Fulfilled.NOT_DISPATCHED;
     }
 
     public Long getReferenceNo() {
@@ -37,6 +43,14 @@ public class Order {
 
     public void setNumBricks(int numBricks) {
         this.numBricks = numBricks;
+    }
+
+    public Fulfilled getFulfilled() {
+        return fulfilled;
+    }
+
+    public void setFulfilled(Fulfilled fulfilled) {
+        this.fulfilled = fulfilled;
     }
 
     @Override

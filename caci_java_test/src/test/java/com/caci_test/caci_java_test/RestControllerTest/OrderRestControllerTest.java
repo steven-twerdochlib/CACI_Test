@@ -38,13 +38,13 @@ public class OrderRestControllerTest {
         mvc.perform(MockMvcRequestBuilders
                 .post("/saveOrder?numBricks=100"))
                 .andExpect(status().isOk())
-                .andExpect(content().json("{0}"));
+                .andExpect(content().json("0"));
     }
      */
     @Test
     public void getOrder() throws Exception{
         Order newOrder = new Order(53L,35);
-        when(orderRepository.findById(53)).thenReturn(Optional.of(newOrder));
+        when(orderRepository.getById(53)).thenReturn(newOrder);
         mvc.perform(MockMvcRequestBuilders
                         .get("/getOrder?referenceNo=53"))
                 .andExpect(status().isOk())
@@ -74,4 +74,29 @@ public class OrderRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json("{\"referenceNo\":53,\"numBricks\":122}"));
     }
+
+    @Test
+    public void dispatchedOrderIdFound() throws Exception{
+        Order newOrder = new Order(53L,122);
+        when(orderRepository.findById(53)).thenReturn(Optional.of(newOrder));
+        when(orderRepository.getById(53)).thenReturn(newOrder);
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/dispatchedOrder?referenceNo=53"))
+                .andExpect(status().isOk())
+                .andExpect(content().json("{\"referenceNo\":53,\"numBricks\":122,\"fulfilled\":DISPATCHED}"));
+    }
+
+    //Test not working, showing Error Status expected:<200> but was:<400>. Also expected content has a timestamp that the actual result will be different to every time test is run.
+    /*
+    @Test
+    public void dispatchedOrderIdNotFound() throws Exception{
+        Order newOrder = new Order(53L,122);
+        //Id Not Found
+        when(orderRepository.getById(53)).thenReturn(newOrder);
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/dispatchedOrder?referenceNo=53"))
+                .andExpect(status().isOk())
+                .andExpect(content().json("{\"timestamp\":\"2023-03-19T02:38:14.762+00:00\",\"status\":400,\"error\":\"Bad Request\",\"path\":\"/dispatchedOrder\"}"));
+    }
+     */
 }
