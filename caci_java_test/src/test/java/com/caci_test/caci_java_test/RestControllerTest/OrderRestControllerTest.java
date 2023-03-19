@@ -38,7 +38,7 @@ public class OrderRestControllerTest {
         mvc.perform(MockMvcRequestBuilders
                 .post("/saveOrder?numBricks=100"))
                 .andExpect(status().isOk())
-                .andExpect(content().json("0"));
+                .andExpect(content().json("{0}"));
     }
      */
     @Test
@@ -63,5 +63,15 @@ public class OrderRestControllerTest {
                         .get("/getAllOrders"))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[{\"referenceNo\":53,\"numBricks\":35}, {\"referenceNo\":81,\"numBricks\":79}]"));
+    }
+
+    @Test
+    public void updateOrder() throws Exception{
+        Order newOrder = new Order(53L,122);
+        when(orderRepository.save(newOrder)).thenReturn(newOrder);
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/updateOrder?referenceNo=53&numBricks=122"))
+                .andExpect(status().isOk())
+                .andExpect(content().json("{\"referenceNo\":53,\"numBricks\":122}"));
     }
 }

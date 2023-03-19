@@ -32,4 +32,11 @@ public class OrderRestController {
     public List<Order> findAllOrders() {
         return orderRepository.findAll();
     }
+
+    @PostMapping(value = "/updateOrder")
+    public Order updateOrder(@PathParam("referenceNo") Long referenceNo, @PathParam("numBricks") Integer numBricks) {
+        Order newOrder = new Order(referenceNo, numBricks);
+        orderRepository.save(newOrder);
+        return newOrder;
+    }
 }
