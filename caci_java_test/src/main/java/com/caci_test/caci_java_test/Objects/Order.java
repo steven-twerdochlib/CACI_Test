@@ -3,7 +3,7 @@ package com.caci_test.caci_java_test.Objects;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "users")
+@Table(name = "orders")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -13,6 +13,14 @@ public class Order {
 
     public Order(int numBricks) {
         this.numBricks = numBricks;
+    }
+
+    public Order(Long referenceNo, int numBricks) {
+        this.referenceNo = referenceNo;
+        this.numBricks = numBricks;
+    }
+
+    public Order() {
     }
 
     public Long getReferenceNo() {
